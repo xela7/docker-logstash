@@ -13,9 +13,6 @@ ENV LC_ALL en_US.UTF-8
 #apt-cacher-ng
 RUN /sbin/ip route | awk '/default/ { print "Acquire::http::Proxy \"http://"$3":8096\";" }' > /etc/apt/apt.conf.d/30proxy
 
-# install uwsgi now because it takes a little while
-RUN pip install uwsgi==2.0
-
 # install nginx
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
 

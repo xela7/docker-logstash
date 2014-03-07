@@ -48,15 +48,15 @@ build-ubuntu-base:
 
 
 clean-logstash:
-	-@docker stop web_server 2>/dev/null || true
-	-@docker rm web_server 2>/dev/null || true
+	-@docker stop logstash 2>/dev/null || true
+	-@docker rm logstash 2>/dev/null || true
 
 build-logstash:
-	docker build -t web_server_image .
+	docker build -t logstash_image .
 
 run-logstash: clean-logstash
 	#Run the webserver on port 8082
-	docker run -d -name logstash -p 8082:80 ${LOGSTASH_BASE_ENV} logstash_image
+	docker run -d -name logstash -p 8097:80 ${LOGSTASH_BASE_ENV} logstash_image
 
 stop-logstash:
 	docker stop logstash
@@ -126,13 +126,13 @@ dock-attach:
 #	All of these local commands assume that you have the following repositories checked out in parent dir
 #   ..
 #   ../docker-elasticsearch  
-#   ../docker-postgresql
 #   ../docker-ubuntu-base
-#   ../globallometree
+#   ../docker-logstash
 #
 
-install-utilities: add-postgres-repo add-docker-repo apt-update
-	sudo apt-get install -y postgresql-client-9.3 git 
+# TODO: Get this working.
+# install-utilities: add-docker-repo apt-update
+# 	sudo apt-get install -y git 
 
 apt-update:
 	sudo apt-get update
