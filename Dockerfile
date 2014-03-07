@@ -12,11 +12,6 @@ ENV LC_ALL en_US.UTF-8
 #TODO: Make a clearer error message when proxy is not running
 #apt-cacher-ng
 RUN /sbin/ip route | awk '/default/ { print "Acquire::http::Proxy \"http://"$3":8096\";" }' > /etc/apt/apt.conf.d/30proxy
-#pypi
-ENV PIP_CONFIG_FILE /home/docker/pip.conf
-RUN echo "[global]" > /home/docker/pip.conf
-RUN /sbin/ip route | awk '/default/ { print "index-url = http://"$3":8095/simple" }' >> /home/docker/pip.conf
-RUN cat /home/docker/pip.conf
 
 # install uwsgi now because it takes a little while
 RUN pip install uwsgi==2.0
