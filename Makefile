@@ -4,12 +4,7 @@
 #   = evaluated immediately when encountered by parser
 
 SHELL := /bin/bash
-SECRET_KEY = secret
-
 PROJECT_ROOT := $(shell pwd)
-
-#This will get evaluated when used below
-LOGSTASH_BASE_ENV := -link elasticsearch_server:ES -v ${PROJECT_ROOT}:/home/docker/code -e SECRET_KEY=${SECRET_KEY}
 
 deploy: clean install-utilities build sleep10 run
 
@@ -55,8 +50,8 @@ build-logstash:
 	docker build -t logstash_image .
 
 run-logstash: clean-logstash
-	#Run the webserver on port 8082
-	docker run -d -name logstash -p 8097:80 ${LOGSTASH_BASE_ENV} logstash_image
+	#Run logstash on port 9300
+	docker run -d -name logstash -p 8097:80 -e ES_HOST=127.0.0.1 -e ES_PORT=9200 logstash_image
 
 stop-logstash:
 	docker stop logstash
@@ -164,8 +159,12 @@ build-logstash-local: build-logstash
 	
 git-pull-all:
 	@echo
-	@tput setaf 6 && echo "--------------- Logstash & Kibana ----------------" && tput sgr0
+	@tput setaf 6 && echo "--------------- Logstash ----------------" && tput sgr0
 	git pull
+	
+	@echo
+	@tput setaf 6 && echo "--------------- Kibana ----------------" && tput sgr0
+	cd ../docker-kibana && git pull
 	
 	@echo
 	@tput setaf 6 && echo "--------------- ElasticSearch Docker ----------------" && tput sgr0
@@ -177,9 +176,13 @@ git-pull-all:
 
 git-push-all:
 	@echo
-	@tput setaf 6 && echo "--------------- Logstash & Kibana ----------------" && tput sgr0
+	@tput setaf 6 && echo "--------------- Logstash ----------------" && tput sgr0
 	git push
 		
+	@echo
+	@tput setaf 6 && echo "--------------- Kibana ----------------" && tput sgr0
+	cd ../docker-kibana && git push
+	
 	@echo
 	@tput setaf 6 && echo "--------------- ElasticSearch Docker ----------------" && tput sgr0
 	cd ../docker-elasticsearch && git push
@@ -190,8 +193,12 @@ git-push-all:
 
 git-status-all:
 	@echo
-	@tput setaf 6 && echo "--------------- Logstash & Kibana ----------------" && tput sgr0
+	@tput setaf 6 && echo "--------------- Logstash ----------------" && tput sgr0
 	git status
+	
+	@echo
+	@tput setaf 6 && echo "--------------- Kibana ----------------" && tput sgr0
+	cd ../docker-kibana && git status
 	
 	@echo
 	@tput setaf 6 && echo "--------------- ElasticSearch Docker ----------------" && tput sgr0
