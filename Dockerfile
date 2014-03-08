@@ -11,7 +11,7 @@ ENV LC_ALL en_US.UTF-8
 #Setup Proxies (Comment Out the following lines if your proxy is not set up)
 #TODO: Make a clearer error message when proxy is not running
 #apt-cacher-ng
-RUN /sbin/ip route | awk '/default/ { print "Acquire::http::Proxy \"http://"$3":8096\";" }' > /etc/apt/apt.conf.d/30proxy
+#RUN /sbin/ip route | awk '/default/ { print "Acquire::http::Proxy \"http://"$3":8096\";" }' > /etc/apt/apt.conf.d/30proxy
 
 # install java
 RUN apt-get install -y wget openjdk-6-jre
