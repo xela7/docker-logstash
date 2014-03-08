@@ -24,7 +24,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network :forwarded_port, guest: 8097, host: 8097 #Kibana
+  config.vm.network :forwarded_port, guest: 8082, host: 80 #Kibana
+  config.vm.network :forwarded_port, guest: 9300, host: 9300 #Logstash
   config.vm.network :forwarded_port, guest: 9200, host: 9200 #Elasticsearch
   config.vm.network :forwarded_port, guest: 8095, host: 8095 #Docker Pypi Cache
   config.vm.network :forwarded_port, guest: 8096, host: 8096 #Docker Apt Cacher NG 
