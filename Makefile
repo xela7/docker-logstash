@@ -10,11 +10,11 @@ deploy: clean install-utilities build sleep10 run
 
 build: build-ubuntu-base build-elasticsearch build-logstash
 
-clean: clean-elasticsearch clean-logstash	
+clean: clean-elasticsearch clean-logstash clean-kibana
 
-run: clean run-elasticsearch run-logstash
+run: clean run-elasticsearch run-logstash run-kibana
 	@echo
-	@echo "Logstash should now be running at http:/127.0.0.1:8097/"
+	@echo "Kibana + Logstash should now be running at http:/127.0.0.1/"
 	@echo
 
 stop: stop-logstash stop-elasticsearch
@@ -39,8 +39,7 @@ echo-vars:
 build-ubuntu-base:
 	docker build -t ubuntu_base github.com/xela7/docker-ubuntu-base
 
-########################################### logstash-kibana #########################################
-
+########################################### logstash #########################################
 
 clean-logstash:
 	-@docker stop logstash 2>/dev/null || true
@@ -51,7 +50,7 @@ build-logstash:
 
 run-logstash: clean-logstash
 	#Run logstash on port 9300
-	docker run -d -name logstash -p 8097:80 -e ES_HOST=127.0.0.1 -e ES_PORT=9200 logstash_image
+	docker run -d -name logstash -p 8097:9300 -e ES_HOST=127.0.0.1 -e ES_PORT=9300 logstash_image
 
 stop-logstash:
 	docker stop logstash
@@ -59,6 +58,27 @@ stop-logstash:
 attach-logstash:
 	#Use lxc attach to attch to the webserver
 	$(MAKE) dock-attach CONTAINER=logstash
+
+
+########################################### kibana #########################################
+
+clean-kibana:
+	-@docker stop kibana 2>/dev/null || true
+	-@docker rm kibana 2>/dev/null || true
+
+build-kibana:
+	docker build -t kibana_image .
+
+run-kibana: clean-kibana
+	#Run kibana on port 8082 forwarding to 80
+	docker run -d -name kibana -p 8082:80 -e ES_HOST=127.0.0.1 -e ES_PORT=9200 kibana_image
+
+stop-kibana:
+	docker stop kibana
+
+attach-kibana:
+	#Use lxc attach to attch to the webserver
+	$(MAKE) dock-attach CONTAINER=kibana
 
 
 ############################################# ELASTICSEARCH  #############################################
@@ -125,9 +145,10 @@ dock-attach:
 #   ../docker-logstash
 #
 
-# TODO: Get this working.
+# TODO: Get this working.  why add-docker-repo?
 # install-utilities: add-docker-repo apt-update
-# 	sudo apt-get install -y git 
+install-utilities: apt-update
+	sudo apt-get install -y git 
 
 apt-update:
 	sudo apt-get update
