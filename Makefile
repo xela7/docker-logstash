@@ -8,7 +8,7 @@ PROJECT_ROOT := $(shell pwd)
 
 deploy: clean install-utilities build sleep10 run
 
-build: build-ubuntu-base build-elasticsearch build-logstash
+build: build-ubuntu-base build-elasticsearch build-logstash build-kibana
 
 clean: clean-elasticsearch clean-logstash clean-kibana
 
@@ -67,7 +67,7 @@ clean-kibana:
 	-@docker rm kibana 2>/dev/null || true
 
 build-kibana:
-	docker build -t kibana_image .
+	docker build -t kibana_image github.com/xela7/docker-kibana
 
 run-kibana: clean-kibana
 	#Run kibana on port 8082 forwarding to 80
@@ -88,7 +88,7 @@ clean-elasticsearch:
 	-@docker rm elasticsearch_server 2>/dev/null || true
 
 build-elasticsearch:
-	docker build -t elasticsearch_server_image github.com/GlobAllomeTree/docker-elasticsearch
+	docker build -t elasticsearch_server_image github.com/xela7/docker-elasticsearch
 
 
 run-elasticsearch: clean-elasticsearch
