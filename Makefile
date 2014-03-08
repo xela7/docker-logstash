@@ -70,8 +70,8 @@ build-kibana:
 	docker build -t kibana_image github.com/xela7/docker-kibana
 
 run-kibana: clean-kibana
-	#Run kibana on port 8082 forwarding to 8082
-	docker run -d -name kibana -p 8082:8082 -e ES_HOST=127.0.0.1 -e ES_PORT=9200 kibana_image
+	#Run kibana on port 80 forwarding to 8082
+	docker run -d -name kibana -p 8082:80 -e ES_HOST=127.0.0.1 -e ES_PORT=9200 kibana_image
 
 stop-kibana:
 	docker stop kibana
